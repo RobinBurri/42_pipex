@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <errno.h>
+#include <wait.h>
 
 
 // Executing commands in C
@@ -20,16 +21,27 @@
 // Executing commands in child process while the main waits
 int main(void)
 {
+	int err;
 	int pid = fork();
 	if (pid == -1)
 		return (1);
-	if (pid == 0)
-	{
-		execlp("ping", "ping", "-c", "3", "google.com", NULL);
-	}
-	else
-	{
-		wait(NULL);
+	if (pid == 0) {
+		err = execlp("ping", "ping", "-c", "3", "google.con", NULL);
+		if (err == -1) {
+			printf("Could not find the program to execute!\n");
+			return (2);
+		}
+	} else {
+		int wstatus;
+		wait(&wstatus);
+		if (WIFEXITED(wstatus)) {
+			int statusCode = WEXITSTATUS(wstatus);
+			if (statusCode == 0) {
+				printf("Success!\n");
+			} else {
+				printf("Failure with status code %d\n", statusCode);
+			}
+		}
 		printf("Some post processes here, main.");
 	}
 	

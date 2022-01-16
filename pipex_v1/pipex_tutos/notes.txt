@@ -1,0 +1,297 @@
+#include <unistd.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <sys/wait.h>
+#include <string.h>
+#include <stdio.h>
+#include <errno.h>
+
+/* 1. Prototypes and summaries */
+
+	write : write to a file descriptor
+	ssize_t write(int fildes, const void *buf, size_t nbyte);	
+
+	read : read (and copy) from a file descriptor
+	ssize_t read(int fd, void *buf, size_t count);
+
+	open : open and possibly create a file
+	int open(const char *pathname, int flags);
+
+	close - close a file descriptor
+	int close(int fd);
+
+	dup : duplicate a file descriptor
+	int dup(int oldfd);
+
+	dup2 : duplicate a file descriptor
+	int dup2(int oldfd, int newfd);
+
+	access : check user's permissions for a file		
+	int access(const char *pathname, int mode);
+
+	execve : execute program
+	int execve(const char *pathname, char *const argv[], char *const envp[]);
+
+	wait : wait for process to change state
+	pid_t wait(int *wstatus);
+
+	waitpid : wait for process to change state
+	pid_t waitpid(pid_t pid, int *wstatus, int options);
+
+	fork : create a child process
+	pid_t fork(void);
+
+	unlink : delete a name and possibly the file it refers to
+	int unlink(const char *pathname);
+
+	exit : cause normal process termination
+	noreturn void exit(int status);
+
+	perror : print a system error message
+	void perror(const char *s);
+
+	strerror : return string describing error number
+	char *strerror(int errnum);
+
+/* 2. known functions */
+
+	close, open, read, write, malloc, free
+
+/* 3. unknown functions */
+
+	////////////////////////////////////////////////////////////////////
+
+	access : check user's permissions for a file		
+	int access(const char *pathname, int mode);
+
+		access() checks whether the calling process can access the file pathname.
+		The mode specifies the accessibility check(s) to be performed : 
+		- F_OK tests for the existence of the file.  
+		- R_OK, W_OK, and X_OK test whether the file exists and grants read, write, execute permissions.
+
+		The check is done using the calling process's real UID and GID,
+		rather than the effective IDs as is done when actually attempting
+		an operation (e.g., open(2)) on the file.
+
+		Determine the invoking user's authority.  
+		Access() does not answer the "can I read/write/execute this file?" question.
+		It answers a slightly different question:
+		"(assuming I'm a setuid binary) can the user who invoked me read/write/execute this file?", 
+		which gives set-user-ID programs the possibility to prevent malicious users from causing them to
+		read files which users shouldn't be able to read.
+
+	On success (all requested permissions granted, or mode is F_OK and the file exists), zero is returned.  
+	On error (at least one bit in mode asked for a permission that is denied, 
+	or mode is F_OK and the file does not exist, or some other error occurred),
+	-1 is returned, and errno is set to indicate the error.
+
+	////////////////////////////////////////////////////////////////////
+
+	unlink : delete a name and possibly the file it refers to
+	int unlink(const char *pathname);
+
+		unlink() deletes a name from the filesystem.  If that name was
+		the last link to a file and no processes have the file open, the
+		file is deleted and the space it was using is made available for
+		reuse.
+
+		If the name was the last link to a file but any processes still
+		have the file open, the file will remain in existence until the
+		last file descriptor referring to it is closed.
+
+	On success, zero is returned.  On error, -1 is returned, and errno is set to indicate the error.
+
+	////////////////////////////////////////////////////////////////////
+
+	exit : cause normal process termination
+	noreturn void exit(int status);
+
+		The exit() function causes normal process termination and the
+		least significant byte of status (i.e., status & 0xFF) is
+		returned to the parent (see wait(2)).
+		All open stdio(3) streams are flushed and closed.  Files created
+		by tmpfile(3) are removed.
+
+	The exit() function does not return.
+
+	////////////////////////////////////////////////////////////////////
+
+	wait : wait for process to change state
+	pid_t wait(int *wstatus);
+
+	waitpid :
+	pid_t waitpid(pid_t pid, int *wstatus, int options);
+
+		All of these system calls are used to wait for state changes in a
+		child of the calling process, and obtain information about the
+		child whose state has changed.  A state change is considered to
+		be: the child terminated; the child was stopped by a signal; or
+		the child was resumed by a signal.  In the case of a terminated
+		child, performing a wait allows the system to release the
+		resources associated with the child; if a wait is not performed,
+		then the terminated child remains in a "zombie" state (see NOTES
+		below).
+
+		If a child has already changed state, then these calls return
+		immediately.  Otherwise, they block until either a child changes
+		state or a signal handler interrupts the call
+
+		wait() and waitpid()
+		The wait() system call suspends execution of the calling thread
+		until one of its children terminates.  The call wait(&wstatus) is
+		equivalent to:
+
+			waitpid(-1, &wstatus, 0);
+
+		The waitpid() system call suspends execution of the calling
+		thread until a child specified by pid argument has changed state.
+		By default, waitpid() waits only for terminated children, but
+		this behavior is modifiable via the options argument, as
+		described below.
+
+		The value of pid can be:
+
+		< -1   meaning wait for any child process whose process group ID
+				is equal to the absolute value of pid.
+
+		-1     meaning wait for any child process.
+
+		0      meaning wait for any child process whose process group ID
+				is equal to that of the calling process at the time of the
+				call to waitpid().
+
+		> 0    meaning wait for the child whose process ID is equal to
+				the value of pid.
+
+	wait(): on success, returns the process ID of the terminated
+	child; on failure, -1 is returned.
+
+	waitpid(): on success, returns the process ID of the child whose
+	state has changed; if WNOHANG was specified and one or more
+	child(ren) specified by pid exist, but have not yet changed
+	state, then 0 is returned.  On failure, -1 is returned.
+
+	////////////////////////////////////////////////////////////////////
+
+	fork : create a child process
+	pid_t fork(void);
+
+	fork() causes creation of a new process.  The new process (child process) is an exact copy of the calling process (parent process) except for the following:
+		The child process has a unique process ID.
+		The child process has a different parent process ID (i.e., the process ID of the parent process).
+		The child process has its own copy of the parent's descriptors. These descriptors reference the same underlying objects, so that, for instance, file pointers in file objects are shared
+		between the child and the parent, so that an lseek(2) on a descriptor in the child process can affect a subsequent read or write by the parent.  This descriptor copying is also used by the shell to establish standard input and output for newly created processes as well as to set up pipes.
+		The child processes resource utilizations are set to 0; see setrlimit(2).
+
+	Upon successful completion, fork() returns a value of 0 to the child process and returns the process ID of the child process to the parent process.  
+	Otherwise, a value of -1 is returned to the parent process, no child process is created, 
+	and the global variable errno is set to indicate the error.
+
+	////////////////////////////////////////////////////////////////////
+
+	pipe : create pipe
+	int pipe(int pipefd[2]);
+
+		pipe() creates a pipe, a unidirectional data channel that can be
+		used for interprocess communication.  The array pipefd is used to
+		return two file descriptors referring to the ends of the pipe.
+		pipefd[0] refers to the read end of the pipe.  pipefd[1] refers
+		to the write end of the pipe.  Data written to the write end of
+		the pipe is buffered by the kernel until it is read from the read
+		end of the pipe.  For further details, see pipe(7).
+
+	On success, zero is returned.  On error, -1 is returned, errno is
+	set to indicate the error, and pipefd is left unchanged.
+
+	////////////////////////////////////////////////////////////////////
+
+	dup : duplicate a file descriptor
+	int dup(int oldfd);
+
+	dup2 : duplicate a file descriptor
+	int dup2(int oldfd, int newfd);
+
+		The dup() system call allocates a new file descriptor that refers
+		to the same open file description as the descriptor oldfd.  (For
+		an explanation of open file descriptions, see open(2).)  The new
+		file descriptor number is guaranteed to be the lowest-numbered
+		file descriptor that was unused in the calling process.
+
+		After a successful return, the old and new file descriptors may
+		be used interchangeably.  Since the two file descriptors refer to
+		the same open file description, they share file offset and file
+		status flags.
+
+		The two file descriptors do not share file descriptor flags (the
+		close-on-exec flag).  The close-on-exec flag (FD_CLOEXEC; see
+		fcntl(2)) for the duplicate descriptor is off.
+
+		The dup2() system call performs the same task as dup(), but
+		instead of using the lowest-numbered unused file descriptor, it
+		uses the file descriptor number specified in newfd.
+		If the file descriptor newfd was previously open, it is closed
+		before being reused; the close is performed silently
+		(any errors during the close are not reported)
+
+	On success, these system calls return the new file descriptor.
+	On error, -1 is returned, and errno is set to indicate the error.
+
+	////////////////////////////////////////////////////////////////////
+
+	execve : execute program
+	int execve(const char *pathname, char *const argv[], char *const envp[]);
+
+		execve() executes the program referred to by pathname.  This
+		causes the program that is currently being run by the calling
+		process to be replaced with a new program, with newly initialized
+		stack, heap, and (initialized and uninitialized) data segments.
+
+		pathname must be either a binary executable, or a script starting
+		with a line of the form:
+
+			#!interpreter [optional-arg]
+
+		For details of the latter case, see "Interpreter scripts" below.
+
+		argv is an array of pointers to strings passed to the new program
+		as its command-line arguments.  By convention, the first of these
+		strings (i.e., argv[0]) should contain the filename associated
+		with the file being executed.  The argv array must be terminated
+		by a NULL pointer.  (Thus, in the new program, argv[argc] will be
+		NULL.)
+
+		envp is an array of pointers to strings, conventionally of the
+		form key=value, which are passed as the environment of the new
+		program.  The envp array must be terminated by a NULL pointer.
+
+	On success, execve() does not return, on error -1 is returned,
+	and errno is set to indicate the error.
+
+	////////////////////////////////////////////////////////////////////
+
+	perror : print a system error message
+	void perror(const char *s);
+
+	The perror() function produces a message on standard error
+	describing the last error encountered during a call to a system
+	or library function.
+
+		First (if s is not NULL and *s is not a null byte ('\0')), the
+		argument string s is printed, followed by a colon and a blank.
+		Then an error message corresponding to the current value of errno
+		and a new-line.
+
+		To be of most use, the argument string should include the name of
+		the function that incurred the error.
+
+		When a system call fails, it usually returns -1 and sets the
+		variable errno to a value describing what went wrong.  (These
+		values can be found in <errno.h>.)  Many library functions do
+		likewise.  The function perror() serves to translate this error
+		code into human-readable form.
+
+	strerror : return string describing error number
+	char *strerror(int errnum);
+
+		The strerror() function returns a pointer to a string that
+		describes the error code passed in the argument errnum

@@ -6,7 +6,7 @@
 int main()
 {
 	int id;
-	id = fork();
+	int id = fork();
 	int n;
 	if (id == 0)
 	 	n = 1;
@@ -22,7 +22,14 @@ int main()
 	if (id != 0)
 		printf("\n");
 	
+	int res = wait(NULL);
+	// Wait return the process id it waited for
+	if (res == -1)
+		printf("No children to wait for.\n");
+	else
+		printf("%d finished execution\n", res);
 	return 0;
 }
 
 // fflush() => flushes printf buffer every loop
+

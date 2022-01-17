@@ -1,6 +1,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <sys/wait.h>
+#include <errno.h>
 
 
 // UNIX PROCESSES IN C { CODEVAULT }, video 5 - fork() multiple times
@@ -23,5 +24,7 @@ int main()
 		else
 			printf("We are the parent process\n");
 	}
+	while (wait(NULL) != -1 || errno != ECHILD)
+		printf("Waited for a child to finish\n");
 	return (0);
 }

@@ -23,13 +23,19 @@ int main()
 	if (pipe(p2) == -1) {return 1;}
 
 	id1 = fork();
-	wait(NULL);
+	printf("%d: id1; **%d**\n", id1, getpid());
+	printf("*****************first fork end ***********************\n");
 	if (id1 == -1)
 		return 1;
 	if (id1 == 0)
 	{
-		printf("I'm here\n");
 		id2 = fork();
+		printf("%d: id1; **%d**\n", id1, getpid());
+		printf("*****************first(2) fork end ***********************\n");
+
+		printf("%d: id2; **%d**\n", id2, getpid());
+		printf("*****************seconde fork end ***********************\n");
+
 		if (id2 == -1)
 			return 1;
 	} else {
@@ -48,19 +54,21 @@ int main()
 	}
 	// int sum = 0;
 	int partial = 0;
-	if (id1 == 0)
+	if (id1 == 0 && id2 != 0)
 		partial = 5;
-	if (id2 == 0)
+	if (id2 == 0 && id1 == 0)
 		partial = 10;
 	// if (id1 == 0 || id2 == 0)
 	// {
 	// 	for (int i = start; i < end; i++)
 	// 		sum += arr[i];
 	// }
-	if (id1 == 0)
-		printf("child 0, partial: %d\n", partial);
-	if (id2 == 0)
-		printf("child 1, partial: %d\n", partial);
+	if (id1 == 0 && id2 == 0)
+		printf("Child one here: %d, partial: %d\n", getpid(), partial);
+	if (id1 == 0 && id2 != 0) 
+		printf("child two here: %d, partial: %d\n", getpid(), partial);
+	if (id1 != 0)
+		printf("root Parent here: %d, partial: %d\n", getpid(), partial);
 	if (id1 == 0)
 	{
 		close(p1[0]);

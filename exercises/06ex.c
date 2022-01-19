@@ -16,26 +16,20 @@ int main()
 	int end;
 	int p1[2];
 	int p2[2];
-	int id1;
-	int id2;
+	int id1 = -1;
+	int id2 = -1;
 
 	if (pipe(p1) == -1) {return 1;}
 	if (pipe(p2) == -1) {return 1;}
 
 	id1 = fork();
-	printf("%d: id1; **%d**\n", id1, getpid());
-	printf("*****************first fork end ***********************\n");
+	printf("FIRST! pid: %d, id1: %d, id2: %d\n", getpid(), id1, id2);
 	if (id1 == -1)
 		return 1;
 	if (id1 == 0)
 	{
+		printf("pass here\n");
 		id2 = fork();
-		printf("%d: id1; **%d**\n", id1, getpid());
-		printf("*****************first(2) fork end ***********************\n");
-
-		printf("%d: id2; **%d**\n", id2, getpid());
-		printf("*****************seconde fork end ***********************\n");
-
 		if (id2 == -1)
 			return 1;
 	} else {
@@ -63,12 +57,12 @@ int main()
 	// 	for (int i = start; i < end; i++)
 	// 		sum += arr[i];
 	// }
-	if (id1 == 0 && id2 == 0)
-		printf("Child one here: %d, partial: %d\n", getpid(), partial);
-	if (id1 == 0 && id2 != 0) 
-		printf("child two here: %d, partial: %d\n", getpid(), partial);
 	if (id1 != 0)
-		printf("root Parent here: %d, partial: %d\n", getpid(), partial);
+		printf("PARENT! pid: %d, id1: %d, id2: %d, partial: %d\n", getpid(), id1, id2, partial);
+	if (id1 == 0 && id2 == 0)
+		printf("child two here! pid: %d, id1: %d, id2: %d, partial: %d\n", getpid(), id1, id2, partial);
+	else if (id1 == 0 && id2 != 0) 
+		printf("child one here! pid: %d, id1: %d, id2: %d, partial: %d\n", getpid(), id1, id2, partial);
 	if (id1 == 0)
 	{
 		close(p1[0]);
@@ -93,7 +87,6 @@ int main()
 		close(p2[0]);
 		int tot = part1 + part2;
 		printf("total: %d\n", tot);
-		wait(NULL);
 	}
 	
 	return (0);

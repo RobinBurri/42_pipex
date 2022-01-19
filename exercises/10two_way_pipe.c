@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <time.h>
 
+// UNIX PROCESSES IN C { CODEVAULT }, video 10- Two way communication between proccesses
 // TWO WAY COMMUNICATION BETWEEN PROCESSES WITH PIPES
 //  pipe() 8 * 4 pipe() back / print; (1) -> (2) -> (1)
 int main()

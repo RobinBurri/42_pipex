@@ -18,6 +18,8 @@ int main(int argc, char **argv)
 	}
 	wait(NULL);
 	printf("\n\033[0;31mEXECL END\033[0m\n\n");
+
+
 	pid = fork();
 	if (pid == 0)
 	{
@@ -26,6 +28,8 @@ int main(int argc, char **argv)
 	}
 	wait(NULL);
 	printf("\n\033[0;31mEXECLP END\033[0m\n\n");
+
+
 	pid = fork();
 	if (pid == 0)
 	{
@@ -41,6 +45,9 @@ int main(int argc, char **argv)
 	}
 	wait(NULL);
 	printf("\n\033[0;31mEXECVP END\033[0m\n\n");
+
+
+	
 	pid = fork();
 	if (pid == 0)
 	{

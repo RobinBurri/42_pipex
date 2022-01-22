@@ -6,7 +6,7 @@
 #    By: rburri <rburri@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/10/25 13:29:27 by rburri            #+#    #+#              #
-#    Updated: 2022/01/22 15:19:19 by rburri           ###   ########.fr        #
+#    Updated: 2022/01/22 15:51:04 by rburri           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -44,7 +44,6 @@ all: $(NAME)
 
 $(NAME): $(OBJECTS)
 	ar rc libft.a $(OBJECTS)
-	@make clean
 	@echo "$(GREEN)Make libft done$(RESET)"
 
 %.o: %.c

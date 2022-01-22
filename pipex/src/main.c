@@ -1,50 +1,39 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rburri <rburri@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/01/22 15:58:52 by rburri            #+#    #+#             */
+/*   Updated: 2022/01/22 17:14:34 by rburri           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../pipex.h"
 
-int main(int argc, char *argv[])
+int	main(int argc, char **argv, char **envp)
 {
-	int fdin;
-	int fdout;
-	int res;
-	int pid1;
-	int pid2;
-	int pfd[2];
-	open_check_files(argv[1], argv[2], &fdin, &fdout, argc);
-	res = pipe(pfd);
-	if (res == -1)
-		return 1;
-	
-	pid1 = fork();
-	if (pid1 < 0)
-		return 2;
-	if (pid1 == 0)
-	{
-		// grep child
-		close(pfd[0]);
-		// replace stdin by finput
-		dup2(fdin, STDIN_FILENO);
-		// replace stdout by pid[1]
-		dup2(pfd[1], STDOUT_FILENO);
-		close(pfd[1]);
-		execlp("grep", "grep", " tes ", NULL);
+	int	fdin;
+	int	fdout;
+	int	pipe_fd[2];
+	int	process_id[2];
 
-		return (0);
-	}
-	
-	pid2 = fork();
-	if (pid2 < 0)
-		return 2;
-	if (pid2 == 0)
-	{
-		// wc child
-		close(pfd[1]);
-		dup2(pfd[0], STDIN_FILENO);
-		close(pfd[0]);
-		dup2(fdout, STDOUT_FILENO);
-		execlp("wc", "wc", "-l", NULL);
-		return (0);
-	}
-	close(pfd[0]);
-	close(pfd[1]);
+	open_check_files(argv[1], argv[2], &fdin, &fdout);
+	if (pipe(pipe_fd) == -1)
+		send_err("PIPE CREATION ERR");
+	process_id[0] = fork();
+	if (process_id[0] < 0)
+		send_err("FORK ERR");
+	if (process_id[0] == 0)
+		cmd1_child(argv[1], pipe_fd, fdin, envp);
+	process_id[1] = fork();
+	if (process_id[1] < 0)
+		send_err("FORK ERR");
+	if (process_id[1] == 0)
+		cmd2_child(argv[2], pipe_fd, fdout, envp);
+	close(pipe_fd[0]);
+	close(pipe_fd[1]);
 	wait(NULL);
 	wait(NULL);
 	close_check_files(fdin, fdout);

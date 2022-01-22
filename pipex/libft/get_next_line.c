@@ -5,104 +5,92 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: rburri <rburri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/10/29 08:13:17 by rburri            #+#    #+#             */
-/*   Updated: 2021/12/17 14:05:34 by rburri           ###   ########.fr       */
+/*   Created: 2022/01/22 14:58:08 by rburri            #+#    #+#             */
+/*   Updated: 2022/01/22 14:58:59 by rburri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static int	ft_check_newline(char *str)
+static int	strlen2(char *s)
 {
 	int	i;
 
 	i = 0;
-	if (!str)
-		return (-1);
-	while (str[i])
+	if (s == 0)
+		return (0);
+	while (s[i])
+		i++;
+	return (i);
+}
+
+static	char	*join(char *str, char c)
+{
+	char	*tmp;
+	int		i;
+	int		len;
+
+	i = 0;
+	len = strlen2(str);
+	tmp = malloc(len + 2);
+	if (tmp == 0)
+		return (0);
+	while (i < len)
 	{
-		if (str[i] == '\n')
-			return (i);
+		tmp[i] = str[i];
 		i++;
 	}
-	return (-1);
-}
-
-static char	*ft_send_line(char **str, int check)
-{
-	char		*line;
-	int			len;
-
-	line = ft_substrgnl(*str, 0, check + 1, 0);
-	len = (ft_strlen(*str) - ft_strlen(line));
-	*str = ft_substrgnl(*str, check + 1, len, 1);
-	return (line);
-}
-
-static char	*ft_send_last_line(char *str, int ints[])
-{
-	static int	i = 0;
-
-	if ((ints[1] == 0 && (ft_strcmpgnl(str, "") == 0)) || ints[1] == -1
-		|| (ints[2]++ == 1 && ints[1] == 0))
-	{
-		i = 1;
+	tmp[i] = c;
+	tmp[i + 1] = 0;
+	if (str)
 		free(str);
-	}
-	if (i == 1)
-	{
-		ints[0] = 1;
-		ints[1] = 1;
-		ints[2] = 1;
-		i = 0;
-		return (NULL);
-	}
-	i = 1;
-	ints[0] = 1;
-	ints[1] = 1;
-	ints[2] = 1;
-	return (str);
+	return (tmp);
 }
 
-static char	*ft_str_loader(char **str, int ints[])
+static int	init_check(int fd, t_read *info)
 {
-	if (ints[0] == 1)
-	{
-		*str = ft_strdupgnl("", 0);
-		ints[0] = 0;
-	}
+	info->fd = fd;
+	info->pos = 0;
+	info->hasread = read(info->fd, info->data, BUFFER_SIZE);
+	if (info->hasread < 0)
+		return (0);
 	else
+		return (1);
+}
+
+static char	read_check(t_read *info)
+{
+	char	result;
+
+	if (info->pos >= info->hasread)
 	{
-		*str = ft_strdupgnl(*str, 1);
+		info->hasread = read(info->fd, info->data, BUFFER_SIZE);
+		info->pos = 0;
+		if (info->hasread <= 0)
+			return (0);
 	}
-	return (*str);
+	result = info->data[info->pos];
+	info->pos++;
+	return (result);
 }
 
 char	*get_next_line(int fd)
-{	
-	static char	*str;
-	char		buf[BUFFER_SIZE + 1];
-	static int	ints[] = {1, 1, 1};
-	int			check;
+{
+	static t_read	info = {.fd = -1};
+	char			c;
+	char			*str;
 
-	if (fd < 0 || BUFFER_SIZE <= 0)
-		return (NULL);
-	str = ft_str_loader(&str, ints);
-	while (ints[1] > 0)
+	str = 0;
+	if (info.fd != fd)
+		if (!init_check(fd, &info))
+			return (0);
+	c = read_check(&info);
+	while (c)
 	{
-		ints[1] = read(fd, buf, BUFFER_SIZE);
-		if (ints[1] == -1 || (ints[2]++ == 1 && ints[1] == 0))
-			return (ft_send_last_line(str, ints));
-		buf[ints[1]] = '\0';
-		str = ft_strjoingnl(str, buf);
-		if (ft_check_newline(buf) != -1)
-		{
-			check = ft_check_newline(str);
-			return (ft_send_line(&str, check));
-		}
+		str = join(str, c);
+		if (c == '\n')
+			return (str);
+		c = read_check(&info);
 	}
-	check = ft_check_newline(str);
-	if (check != -1)
-		return (ft_send_line(&str, check));
-	return (ft_send_last_line(str, ints));
+	return (str);
 }

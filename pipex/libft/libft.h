@@ -6,7 +6,7 @@
 /*   By: rburri <rburri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 13:55:41 by rburri            #+#    #+#             */
-/*   Updated: 2022/01/07 10:20:52 by rburri           ###   ########.fr       */
+/*   Updated: 2022/01/22 15:10:57 by rburri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # include <stddef.h>
 # include <stdlib.h>
 # include <unistd.h>
+# include <fcntl.h>
 
 int		ft_isprint(int c);
 int		ft_isascii(int c);
@@ -162,6 +163,8 @@ Les nombres négatifs doivent être gérés.
 Valeur de retour: La chaine de caractères représentant l’integer.
 NULL si l’allocation échoue.*/
 
+char	*ft_itoa_base(size_t num, int base);
+
 char	*ft_strmapi(char const *s, char (*f)(unsigned int, char));
 /*Applique la fonction ’f’ à chaque caractère de la chaine de caractères 
 passée en argument pour créer une nouvelle chaine de caractères 
@@ -194,8 +197,8 @@ void	ft_putnbr_fd(int n, int fd);
 int		ft_islower(int c);
 int		ft_isupper(int c);
 int		ft_isspace(int c);
-void	ft_putchar(char c);
-void	ft_putstr(char const *s);
+int		ft_putchar(char c);
+int		ft_putstr(char const *s);
 
 void	*ft_memalloc(size_t size);
 /*Alloue avec malloc et retourne une zone de memoire.
@@ -224,9 +227,12 @@ puis en ajoutant un nouveau caractère nul final.
 La chaîne dest doit être assez grande pour accueillir le résultat.*/
 // GET_NEXT_LINE
 char	*get_next_line(int fd);
-char	*ft_strdupgnl(char *s1, int f);
-char	*ft_strjoingnl(char *s1, char const *s2);
-int		ft_strcmpgnl(const char *s1, const char *s2);
-char	*ft_substrgnl(char *s, unsigned int start, size_t len, int f);
+typedef struct s_read
+{
+	int		fd;
+	int		pos;
+	int		hasread;
+	char	data[BUFFER_SIZE];
+}	t_read;
 
 #endif

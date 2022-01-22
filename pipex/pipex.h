@@ -1,18 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_putchar.c                                       :+:      :+:    :+:   */
+/*   pipex.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rburri <rburri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/10/25 11:16:54 by rburri            #+#    #+#             */
-/*   Updated: 2022/01/22 15:09:38 by rburri           ###   ########.fr       */
+/*   Created: 2022/01/22 14:24:51 by rburri            #+#    #+#             */
+/*   Updated: 2022/01/22 14:35:40 by rburri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#ifndef PIPEX_H
+# define PIPEX_H
 
-int	ft_putchar(char c)
-{
-	return (write(1, &c, 1));
-}
+#include <unistd.h>
+#include <fcntl.h>
+#include <stdlib.h>
+#include <sys/wait.h>
+#include "libft/libft.h"
+
+#include <stdio.h>
+
+
+int		open_check_files(char *input, char *output, int *fdin, int *fdout, int argc);
+void	close_check_files(int fdin, int fdout);
+#endif

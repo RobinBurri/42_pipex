@@ -14,15 +14,12 @@ LIBFT_DIR	= libft
 LIBFT_A		= libft.a
 LIBFT		= -L. -lft
 
-MLX_DIR		= mlx
-MLX_A		= libmlx.a
-MLX			= -L. -lmlx -framework OpenGL -framework AppKit
-
 SRC = src
 
 BIN = bin
 
-SOURCE =  $(SRC)/main.c\
+SOURCE = 	$(SRC)/main.c\
+			$(SRC)/checks.c\
 	
 			
 		
@@ -33,24 +30,20 @@ $(BIN)/%.o : $(SRC)/%.c
 
 all: $(NAME)
 
-
-help: 
-	@echo "src: $(SOURCE)"
-	@echo "obj: $(OBJS)"
-
 ${NAME}:	${OBJS}
-			make -C ${LIBFT_DIR}/
-			cp ${LIBFT_DIR}/$(LIBFT_A) .
+			@make -C ${LIBFT_DIR}/
+			@cp ${LIBFT_DIR}/$(LIBFT_A) .
 			$(CC)  ${OBJS} $(LIBFT) -o $(NAME)
 			@echo "$(GREEN)$(NAME) sucessfully created$(RESET)"
 
 clean:
 		@rm -f $(OBJS)
-		make -C ${LIBFT_DIR} fclean
+		@make -C ${LIBFT_DIR} clean
 
 fclean: clean
 		@rm -f $(NAME)
 		@rm -f $(LIBFT_A)
+		@make -C ${LIBFT_DIR} fclean
 	
 re: fclean all
 

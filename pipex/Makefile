@@ -20,6 +20,8 @@ BIN = bin
 
 SOURCE = 	$(SRC)/main.c\
 			$(SRC)/checks.c\
+			$(SRC)/path.c\
+			$(SRC)/cmds.c\
 	
 			
 		

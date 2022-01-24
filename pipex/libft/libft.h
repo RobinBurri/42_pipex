@@ -6,7 +6,7 @@
 /*   By: rburri <rburri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 13:55:41 by rburri            #+#    #+#             */
-/*   Updated: 2022/01/22 15:10:57 by rburri           ###   ########.fr       */
+/*   Updated: 2022/01/24 07:15:41 by rburri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -234,5 +234,7 @@ typedef struct s_read
 	int		hasread;
 	char	data[BUFFER_SIZE];
 }	t_read;
+
+void	ft_free_split(char **sp);
 
 #endif

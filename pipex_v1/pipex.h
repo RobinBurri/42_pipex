@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tnanchen <thomasnanchen@hotmail.com>       +#+  +:+       +#+        */
+/*   By: rburri <rburri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/17 17:47:54 by tnanchen          #+#    #+#             */
-/*   Updated: 2021/11/17 18:41:13 by tnanchen         ###   ########.fr       */
+/*   Updated: 2022/01/24 09:08:31 by rburri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # include <errno.h>
 # include <string.h>
 # include <fcntl.h>
+# include <stdio.h>
 
 # include "libft/libft.h"
 

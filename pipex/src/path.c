@@ -6,7 +6,7 @@
 /*   By: rburri <rburri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/22 16:52:18 by rburri            #+#    #+#             */
-/*   Updated: 2022/01/22 17:05:56 by rburri           ###   ########.fr       */
+/*   Updated: 2022/01/24 07:30:08 by rburri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,11 +43,11 @@ char	*find_path(char *cmd, char **envp)
 		free(slash);
 		if (!access(path, F_OK))
 		{
-			ft_free_arr(paths);
+			ft_free_split(paths);
 			return (path);
 		}
 		free(path);
 	}
-	ft_free_arr(paths);
+	ft_free_split(paths);
 	return (0);
 }

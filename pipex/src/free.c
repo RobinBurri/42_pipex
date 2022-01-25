@@ -1,38 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   path.c                                             :+:      :+:    :+:   */
+/*   free.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rburri <rburri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/01/22 16:52:18 by rburri            #+#    #+#             */
-/*   Updated: 2022/01/25 10:08:56 by rburri           ###   ########.fr       */
+/*   Created: 2022/01/25 10:12:36 by rburri            #+#    #+#             */
+/*   Updated: 2022/01/25 10:26:37 by rburri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../pipex.h"
 
-char	*find_path(char **envp)
+void	free_main_pipex(t_pipex *pipex)
 {
-	while (ft_strncmp("PATH", *envp, 4))
-		envp++;
-	return (*envp + 5);
+	int	i;
+
+	i = 0;
+	close_check_files(pipex);
+	while (pipex->cmd_paths[i])
+		free(pipex->cmd_paths[i++]);
+	free(pipex->cmd_paths);
 }
 
-char	*get_cmd(char **paths, char *cmd)
+void	free_child_pipex(t_pipex *pipex)
 {
-	char	*tmp;
-	char	*command;
+	int	i;
 
-	while(*paths)
-	{
-		tmp = ft_strjoin(*paths, "/");
-		command = ft_strjoin(tmp, cmd);
-		free(tmp);
-		if (access(command, F_OK) == 0)
-			return (command);
-		free(command);
-		paths++;
-	}
-	return (NULL);
+	i = 0;
+	while (pipex->cmd_args[i])
+		free(pipex->cmd_args[i++]);
+	free(pipex->cmd_args);
+	free(pipex->cmd);
 }

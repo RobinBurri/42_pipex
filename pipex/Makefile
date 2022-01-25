@@ -8,7 +8,7 @@ CC = gcc
 
 NAME = pipex
 
-FLAGS = -Wall -Wextra -Werror -g
+FLAGS = -Wall -Wextra -Werror -g3
 
 LIBFT_DIR	= libft
 LIBFT_A		= libft.a
@@ -22,6 +22,7 @@ SOURCE = 	$(SRC)/main.c\
 			$(SRC)/checks.c\
 			$(SRC)/path.c\
 			$(SRC)/cmds.c\
+			$(SRC)/free.c\
 	
 			
 		

@@ -6,7 +6,7 @@
 /*   By: rburri <rburri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/22 14:24:51 by rburri            #+#    #+#             */
-/*   Updated: 2022/01/25 10:25:12 by rburri           ###   ########.fr       */
+/*   Updated: 2022/01/25 10:39:46 by rburri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,8 @@ typedef struct s_pipex
 void	open_check_files(int argc, char **argv, t_pipex *pipex);
 void	close_check_files(t_pipex *pipex);
 void	close_pipes(t_pipex *pipex);
-void	cmd1_child(t_pipex pipex, char ** argv, char **envp);
-void	cmd2_child(t_pipex pipex, char ** argv, char **envp);
+void	cmd1_child(t_pipex pipex, char **argv, char **envp);
+void	cmd2_child(t_pipex pipex, char **argv, char **envp);
 char	*find_path(char **envp);
 char	*get_cmd(char **paths, char *cmd);
 void	send_err(char *s);

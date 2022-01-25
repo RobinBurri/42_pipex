@@ -14,13 +14,18 @@
 # define PIPEX_H
 
 # include <unistd.h>
+//for close, pipe, dup2
 # include <fcntl.h>
+//for open
 # include <stdlib.h>
+// for malloc, free, exit
 # include <sys/wait.h>
+// for waitpid
 # include <errno.h>
-# include "libft/libft.h"
-
+// for errno
 # include <stdio.h>
+// for perror
+# include "libft/libft.h"
 
 typedef struct s_pipex
 {
@@ -36,7 +41,7 @@ typedef struct s_pipex
 }				t_pipex;
 
 // ERRORS MESSAGES
-# define GEN_ERR 1
+# define USG_ERR "Usage: ./pipex [file1] [cmd1] [cmd2] [file2]"
 # define OPEN_IN "OPEN INPUT ERROR"
 # define OPEN_OUT "OPEN OUTPUT ERROR"
 # define PIPE_CR "PIPE CREATION ERROR"

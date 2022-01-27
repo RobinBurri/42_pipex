@@ -6,7 +6,7 @@
 /*   By: rburri <rburri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/22 15:59:54 by rburri            #+#    #+#             */
-/*   Updated: 2022/01/25 10:57:29 by rburri           ###   ########.fr       */
+/*   Updated: 2022/01/27 06:47:33 by rburri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void	cmd1_child(t_pipex pipex, char **argv, char **envp)
 	pipex.cmd = get_cmd(pipex.cmd_paths, pipex.cmd_args[0]);
 	if (!pipex.cmd)
 	{
-		free_child_pipex(&pipex);
+		free_cmd_pipex(&pipex);
 		send_err(CMD_ERR);
 	}
 	execve(pipex.cmd, pipex.cmd_args, envp);
@@ -46,7 +46,7 @@ void	cmd2_child(t_pipex pipex, char **argv, char **envp)
 	pipex.cmd = get_cmd(pipex.cmd_paths, pipex.cmd_args[0]);
 	if (!pipex.cmd)
 	{
-		free_child_pipex(&pipex);
+		free_cmd_pipex(&pipex);
 		send_err(CMD_ERR);
 	}
 	execve(pipex.cmd, pipex.cmd_args, envp);

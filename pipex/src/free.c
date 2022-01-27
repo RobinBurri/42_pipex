@@ -6,7 +6,7 @@
 /*   By: rburri <rburri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/25 10:12:36 by rburri            #+#    #+#             */
-/*   Updated: 2022/01/25 10:26:37 by rburri           ###   ########.fr       */
+/*   Updated: 2022/01/27 06:48:24 by rburri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void	free_main_pipex(t_pipex *pipex)
 	free(pipex->cmd_paths);
 }
 
-void	free_child_pipex(t_pipex *pipex)
+void	free_cmd_pipex(t_pipex *pipex)
 {
 	int	i;
 
